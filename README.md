@@ -16,7 +16,13 @@
 * EF In-Memory Database
 
 ### Nativate Console
-這個 Branch 的 Logger 是 ASP.NET Core 內建的 Console 
+這個 Branch 的 Logger 是 ASP.NET Core 內建的 Console，切換請使用
+```
+
+git checkout NativeConsole
+
+```
+
 
 
 
