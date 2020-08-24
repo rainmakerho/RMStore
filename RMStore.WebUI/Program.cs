@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace RMStore.WebUI
 {
@@ -20,8 +21,24 @@ namespace RMStore.WebUI
         
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-            host.Run();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
+            try
+            {
+                Log.Information(messageTemplate: "Start Web UI Application");
+                var host = CreateHostBuilder(args).Build();
+                host.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, messageTemplate: "WebUI App GG!");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -29,6 +46,6 @@ namespace RMStore.WebUI
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).UseSerilog();
     }
 }

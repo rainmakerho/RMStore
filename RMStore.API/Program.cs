@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RMStore.Domain;
+using Serilog;
 
 namespace RMStore.API
 {
@@ -23,17 +24,34 @@ namespace RMStore.API
         public  static void Main(string[] args)
         {
 
-            var host = CreateHostBuilder(args).Build();
-            //application init ...
-            using (var scope = host.Services.CreateScope())
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(Configuration)
+                .CreateLogger();
+            try
             {
-                var serviceProvider = scope.ServiceProvider;
-                var hostingEnvironment = serviceProvider
-                    .GetRequiredService<IHostEnvironment>();
-                var ctx = serviceProvider.GetRequiredService<InMemoryDbContext>();
-                ctx.Database.EnsureCreated();
+                Log.Information(messageTemplate: "Start API Application");
+                var host = CreateHostBuilder(args).Build();
+                //application init ...
+                using (var scope = host.Services.CreateScope())
+                {
+                    var serviceProvider = scope.ServiceProvider;
+                    var hostingEnvironment = serviceProvider
+                        .GetRequiredService<IHostEnvironment>();
+                    var ctx = serviceProvider.GetRequiredService<InMemoryDbContext>();
+                    ctx.Database.EnsureCreated();
+                }
+                host.Run();
             }
-            host.Run();
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, messageTemplate: "API App GG!");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+
+            
 
         }
 
@@ -42,6 +60,7 @@ namespace RMStore.API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).UseSerilog();
+                
     }
 }

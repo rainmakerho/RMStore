@@ -30,7 +30,6 @@ namespace RMStore.WebUI
             CancellationToken cancellationToken)
         {
             var token = await _httpContext.GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
-
             request.Headers.Add("Authorization", $"Bearer {token}");
             var response = await base.SendAsync(request, cancellationToken);
 

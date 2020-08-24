@@ -52,6 +52,7 @@ namespace RMStore.API
 
             services.AddDbContext<InMemoryDbContext>(options =>
                       options.UseInMemoryDatabase("rmstore"));
+            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddControllers();
         }
 

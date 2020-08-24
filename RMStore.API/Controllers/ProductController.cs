@@ -16,12 +16,12 @@ namespace RMStore.API.Controllers
     {
 
         private readonly ILogger<ProductController> _logger;
-        private readonly InMemoryDbContext _dbContext;
+        private readonly IProductRepository _productRepository;
 
-        public ProductController(ILogger<ProductController> logger, InMemoryDbContext dbContext)
+        public ProductController(ILogger<ProductController> logger, IProductRepository productRepository)
         {
             _logger = logger;
-            _dbContext = dbContext;
+            _productRepository = productRepository;
         }
 
         [HttpGet()]
@@ -32,13 +32,8 @@ namespace RMStore.API.Controllers
             var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
             _logger.LogInformation(message: "{userId} is inside get all products API call. {Claims}",
                 User.Identity.Name, userId, User.Claims);
-            var collection = _dbContext.Products as IQueryable<Product>;
-            if (!string.IsNullOrWhiteSpace(productName))
-            {
-                collection = collection.Where(
-                        p=>p.Name.Contains(productName));
-            }
-            return Ok(collection.ToList());
+            var products = _productRepository.GetAllProducts(productName);
+            return Ok(products);
         }
 
         [HttpOptions]
