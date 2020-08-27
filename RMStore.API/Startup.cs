@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using RMStore.API.Middleware;
 using RMStore.Domain;
 
 namespace RMStore.API
@@ -56,23 +60,25 @@ namespace RMStore.API
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            //使用自定的 Exception Handler
+            app.UseApiExceptionHandler(options => options.AddResponseDetails = UpdateApiErrorResponse);
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private void UpdateApiErrorResponse(HttpContext context, Exception ex, ApiError error)
+        {
+            if(ex.GetType().Name == typeof(SqlException).Name)
+            {
+                error.Detail = "這是Database的錯誤";
+            }
         }
     }
 }

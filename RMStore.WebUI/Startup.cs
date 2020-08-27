@@ -42,15 +42,9 @@ namespace RMStore.WebUI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
-
+            //因為會寫 Log 所以不用 UseDeveloperExceptionPage
+            app.UseExceptionHandler("/Error");
+            
             app.UseStaticFiles();
 
             app.UseRouting();

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 
@@ -17,14 +19,17 @@ namespace RMStore.Domain
         }
         public List<Product> GetAllProducts(string productName)
         {
-            _logger.LogInformation(message: "在 Repository 中依產品名稱取得資料");
+            _logger.LogInformation(message: "GetAllProducts({productName})", productName);
             var collection = _dbContext.Products as IQueryable<Product>;
             if (!string.IsNullOrWhiteSpace(productName))
             {
                 collection = collection.Where(
-                        p => p.Name.Contains(productName));
+                        p => p.Name.ToLower().Contains(productName.ToLower()));
             }
+            if (productName == "error")
+                throw SqlExceptionCreator.NewSqlException();
             return collection.ToList();
         }
+
     }
 }

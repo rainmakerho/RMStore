@@ -15,15 +15,15 @@
 * ASP.NET Core
 * EF In-Memory Database
 
-### serilog
-這個 Branch 的 Logger 是 ASP.NET Core 內建的 Console，切換請使用
+### err
+這個 Branch 是練習錯誤的處理，切換請使用
 ```
 
-git checkout serilog
+git checkout err
 
 ```
-使用 serilog 將 Log 寫到檔案之中，WebUI 與 API 均寫到同一個檔案之中。
-檔案路徑在 appsettings.json 的 Serilog : WriteTo 區段之中
+使用 err 將 Log 寫到檔案之中，WebUI 與 API 均寫到同一個檔案之中。
+檔案路徑在 appsettings.json 的 err : WriteTo 區段之中
 
 
 

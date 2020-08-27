@@ -25,7 +25,7 @@ namespace RMStore.WebUI.Pages
 
 
         [BindProperty]
-        public string UserId { get; set; }
+        public string UserId { get; set; } = "tony";
 
         [BindProperty, DataType(DataType.Password)]
         public string Password { get; set; }
