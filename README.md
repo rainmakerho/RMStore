@@ -16,7 +16,7 @@
 * EF In-Memory Database
 
 ### serilog
-這個 Branch 的 Logger 是 ASP.NET Core 內建的 Console，切換請使用
+這個 Branch 的 Logger 是使用 serilog，切換請使用
 ```
 
 git checkout serilog
