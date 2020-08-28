@@ -22,8 +22,8 @@
 git checkout err
 
 ```
-使用 err 將 Log 寫到檔案之中，WebUI 與 API 均寫到同一個檔案之中。
-檔案路徑在 appsettings.json 的 err : WriteTo 區段之中
+使用 Serilog 將 Log 寫到檔案之中，WebUI 與 API 均寫到同一個檔案之中。
+檔案路徑在 appsettings.json 的 Serilog : WriteTo 區段之中
 
 
 
