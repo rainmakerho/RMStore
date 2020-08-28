@@ -8,6 +8,7 @@
 |RMStore.WebUI|ASP.NET Core Razor Page 專案，呈現畫面|
 |RMStore.API|ASP.NET Core API 專案，負責取得資料|
 |RMStore.Domain|RMStore參考使用的Domain專案|
+|RMStore.Infrastructure|RMStore參考使用的Middleware, Filter, Atrribute, BasePageMode 專案|
 
 ### 環境
 * Windows 10
@@ -15,15 +16,20 @@
 * ASP.NET Core
 * EF In-Memory Database
 
-### err
-這個 Branch 是練習錯誤的處理，切換請使用
+### performancelog
+這個 Branch 是
+
+1. 將共用的 Middleware 、 Filter 等 Class 抽到 RMStore.Infrastructure 專案，供 API & WebUI 使用。
+2. 記錄 Razor Page & Action 的執行時間，並使用 LoggerMessage.Define 來減少參數的 boxing ，以增加效能。
+
+切換請使用
 ```
 
-git checkout err
+git checkout performancelog
 
 ```
-使用 err 將 Log 寫到檔案之中，WebUI 與 API 均寫到同一個檔案之中。
-檔案路徑在 appsettings.json 的 err : WriteTo 區段之中
+使用 Serilog 將 Log 寫到檔案之中，WebUI 與 API 均寫到同一個檔案之中。
+檔案路徑在 appsettings.json 的 Serilog : WriteTo 區段之中
 
 
 

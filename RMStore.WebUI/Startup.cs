@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RMStore.Infrastructure.Filters;
 
 namespace RMStore.WebUI
 {
@@ -34,9 +35,15 @@ namespace RMStore.WebUI
                 .AddCookie(cookieOptions => {
                     cookieOptions.LoginPath = "/";
                 });
-            services.AddRazorPages().AddRazorPagesOptions(options => {
-                options.Conventions.AuthorizePage("/Product");
-            });
+            services.AddRazorPages()
+                .AddRazorPagesOptions(options => {
+                    options.Conventions.AuthorizePage("/Product");
+                })
+                .AddMvcOptions(options =>
+                {
+                    //加入 Filter 來記錄 Razor Page 執行的起迄時間
+                    options.Filters.Add(typeof(TrackPagePerformanceFilter));
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

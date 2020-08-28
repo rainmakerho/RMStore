@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RMStore.Infrastructure.Attributes;
 
 namespace RMStore.API.Controllers
 {
+    [TypeFilter(typeof(TrackPerformance))]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase

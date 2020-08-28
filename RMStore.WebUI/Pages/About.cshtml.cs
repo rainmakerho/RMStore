@@ -5,17 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using RMStore.Infrastructure.BaseClasses;
 
 namespace RMStore.WebUI.Pages
 {
-    public class AboutModel : PageModel
+    public class AboutModel : BasePageModel
     {
-        private readonly ILogger<AboutModel> _logger;
 
-        public AboutModel(ILogger<AboutModel> logger)
-        {
-            _logger = logger;
-        }
+        public AboutModel(ILogger<AboutModel> logger) : base(logger)
+        {}
 
         public void OnGet()
         {

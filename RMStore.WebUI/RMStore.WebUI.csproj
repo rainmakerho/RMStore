@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RMStore.Domain\RMStore.Domain.csproj" />
+    <ProjectReference Include="..\RMStore.Infrastructure\RMStore.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

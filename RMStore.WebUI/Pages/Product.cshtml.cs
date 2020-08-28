@@ -12,10 +12,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RMStore.Domain;
+using RMStore.Infrastructure.BaseClasses;
 
 namespace RMStore.WebUI.Pages
 {
-    public class ProductModel : PageModel
+    public class ProductModel : BasePageModel
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
@@ -24,7 +25,7 @@ namespace RMStore.WebUI.Pages
         [BindProperty]
         public string ProductName { get; set; } = string.Empty;
 
-        public ProductModel(ILogger<ProductModel> logger, IConfiguration configuration)
+        public ProductModel(ILogger<ProductModel> logger, IConfiguration configuration): base(logger)
         {
             _logger = logger;
             _configuration = configuration;

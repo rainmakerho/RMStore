@@ -16,8 +16,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using RMStore.API.Middleware;
+using RMStore.Infrastructure.Middleware;
 using RMStore.Domain;
+using RMStore.Infrastructure.Filters;
 
 namespace RMStore.API
 {
@@ -57,7 +58,10 @@ namespace RMStore.API
             services.AddDbContext<InMemoryDbContext>(options =>
                       options.UseInMemoryDatabase("rmstore"));
             services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(TrackActionPerformanceFilter));
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
