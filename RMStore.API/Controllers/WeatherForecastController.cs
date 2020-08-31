@@ -8,7 +8,7 @@ using RMStore.Infrastructure.Attributes;
 
 namespace RMStore.API.Controllers
 {
-    [TypeFilter(typeof(TrackPerformance))]
+    //[TypeFilter(typeof(TrackPerformance))]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase

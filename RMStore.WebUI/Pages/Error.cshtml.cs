@@ -50,7 +50,6 @@ namespace RMStore.WebUI.Pages
 
         private void ProcessError()
         {
-            _logger.LogInformation("Error Page OnGet");
             RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
             var exceptionPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             var ex = exceptionPathFeature?.Error;
@@ -61,8 +60,6 @@ namespace RMStore.WebUI.Pages
                 ApiErrorId = ex.Data["API ErrorId"]?.ToString();
                 ApiTitle = ex.Data["API Title"]?.ToString();
                 ApiDetail = ex.Data["API Detail"]?.ToString();
-
-
             }
         }
     }

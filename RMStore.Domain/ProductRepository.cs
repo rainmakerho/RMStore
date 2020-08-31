@@ -19,16 +19,22 @@ namespace RMStore.Domain
         }
         public List<Product> GetAllProducts(string productName)
         {
-            _logger.LogInformation(message: "GetAllProducts({productName})", productName);
-            var collection = _dbContext.Products as IQueryable<Product>;
-            if (!string.IsNullOrWhiteSpace(productName))
+            using(_logger.BeginScope("Database Access"))
             {
-                collection = collection.Where(
-                        p => p.Name.ToLower().Contains(productName.ToLower()));
+                _logger.LogInformation(message: "GetAllProducts({productName})", productName);
+                var collection = _dbContext.Products as IQueryable<Product>;
+                if (!string.IsNullOrWhiteSpace(productName))
+                {
+                    collection = collection.Where(
+                            p => p.Name.ToLower().Contains(productName.ToLower()));
+                }
+                if (productName == "error")
+                    throw SqlExceptionCreator.NewSqlException();
+                if (productName == "error2")
+                    throw SqlExceptionCreator.NewSqlException(2);
+                return collection.ToList();
             }
-            if (productName == "error")
-                throw SqlExceptionCreator.NewSqlException();
-            return collection.ToList();
+            
         }
 
     }

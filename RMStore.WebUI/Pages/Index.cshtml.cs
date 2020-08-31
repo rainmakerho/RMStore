@@ -53,7 +53,8 @@ namespace RMStore.WebUI.Pages
                 var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim("UserId", UserId)
+                        new Claim("UserId", UserId),
+                        new Claim(ClaimTypes.Email, user.Email)
                     };
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 

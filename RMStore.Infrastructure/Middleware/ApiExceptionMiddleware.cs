@@ -12,12 +12,14 @@ namespace RMStore.Infrastructure.Middleware
         private readonly ApiExceptionOptions _options;
         private readonly RequestDelegate _next;
         private readonly ILogger<ApiExceptionMiddleware> _logger;
+        private readonly IScopeInformation _scopeInfo;
         public ApiExceptionMiddleware(ApiExceptionOptions options, RequestDelegate next
-            , ILogger<ApiExceptionMiddleware> logger)
+            , ILogger<ApiExceptionMiddleware> logger, IScopeInformation scopeInfo)
         {
             _options = options;
             _next = next;
             _logger = logger;
+            _scopeInfo = scopeInfo;
         }
 
         public async Task Invoke(HttpContext context)
@@ -40,11 +42,15 @@ namespace RMStore.Infrastructure.Middleware
                 Title = "api 發生錯誤，請洽管理人員"
             };
             _options.AddResponseDetails?.Invoke(context, exception, error);
-
+            var level = _options.DetermineLogLevel?.Invoke(exception) ?? LogLevel.Error;
             var innerExMessage = GetInnermostExceptionMessage(exception);
 
-            _logger.LogError(exception, "api 發生錯誤!!! " + innerExMessage + " --{ErrorId}.", error.Id);
-
+            using (_logger.BeginScope(_scopeInfo.GetUserScopeInfo(context.User)))
+            using (_logger.BeginScope(_scopeInfo.HostScopeInfo))
+            {
+                //_logger.LogError(exception, "api 發生錯誤!!! " + innerExMessage + " --{ErrorId}.", error.Id);
+                _logger.Log(level, exception, "api 發生錯誤!!! " + innerExMessage + " --{ErrorId}.", error.Id);
+            }
             var result = JsonConvert.SerializeObject(error);
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

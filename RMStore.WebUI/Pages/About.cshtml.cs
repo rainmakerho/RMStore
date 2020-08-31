@@ -5,14 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using RMStore.Infrastructure;
 using RMStore.Infrastructure.BaseClasses;
 
 namespace RMStore.WebUI.Pages
 {
-    public class AboutModel : BasePageModel
+    public class AboutModel : PageModel
     {
 
-        public AboutModel(ILogger<AboutModel> logger) : base(logger)
+        public AboutModel(ILogger<AboutModel> logger, IScopeInformation scopeInfo) 
         {}
 
         public void OnGet()

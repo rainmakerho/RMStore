@@ -12,16 +12,21 @@ namespace RMStore.Infrastructure.BaseClasses
     {
         private readonly ILogger _logger;
         private Stopwatch _timmer;
-
-        public BasePageModel(ILogger logger)
+        private readonly IScopeInformation _scopeInfo;
+        private IDisposable _userScope;
+        private IDisposable _hostScope;
+        public BasePageModel(ILogger logger, IScopeInformation scopeInfo)
         {
             _logger = logger;
+            _scopeInfo = scopeInfo;
         }
 
         public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
         {
             _timmer = new Stopwatch();
             _timmer.Start();
+            _userScope = _logger.BeginScope(_scopeInfo.GetUserScopeInfo(context.HttpContext.User));
+            _hostScope = _logger.BeginScope(_scopeInfo.HostScopeInfo);
         }
 
         public override void OnPageHandlerExecuted(PageHandlerExecutedContext context)
@@ -33,7 +38,8 @@ namespace RMStore.Infrastructure.BaseClasses
                     , context.HttpContext.Request.Method
                     , _timmer.ElapsedMilliseconds);
             }
-            
+            _userScope.Dispose();
+            _hostScope.Dispose();
         }
     }
 }

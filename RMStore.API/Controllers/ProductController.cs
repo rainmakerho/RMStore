@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RMStore.Domain;
+using RMStore.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace RMStore.API.Controllers
@@ -17,11 +19,14 @@ namespace RMStore.API.Controllers
 
         private readonly ILogger<ProductController> _logger;
         private readonly IProductRepository _productRepository;
+        private readonly IScopeInformation _scopeInformation;
 
-        public ProductController(ILogger<ProductController> logger, IProductRepository productRepository)
+        public ProductController(ILogger<ProductController> logger, IProductRepository productRepository
+            , IScopeInformation scopeInformation)
         {
             _logger = logger;
             _productRepository = productRepository;
+            _scopeInformation = scopeInformation;
         }
 
         [HttpGet()]
@@ -29,9 +34,7 @@ namespace RMStore.API.Controllers
         public ActionResult<IEnumerable<Product>> GetProducts(
             [FromQuery] string productName)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-            _logger.LogInformation(message: "{userId} is inside get all products API call. {Claims}",
-                User.Identity.Name, userId, User.Claims);
+            _logger.LogInformation(message: "API ENTRY: Inside search products API Call");
             var products = _productRepository.GetAllProducts(productName);
             return Ok(products);
         }

@@ -11,6 +11,6 @@ namespace RMStore.Infrastructure.Middleware
     {
         public Action<HttpContext, Exception, ApiError> AddResponseDetails { get; set; }
 
-        //public Func<Exception, LogLevel> DetermineLogLevel { get; set; }
+        public Func<Exception, LogLevel> DetermineLogLevel { get; set; }
     }
 }

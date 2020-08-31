@@ -19,7 +19,16 @@ namespace RMStore.Domain
         internal static SqlException NewSqlException(int number = 1)
         {
             SqlErrorCollection collection = Construct<SqlErrorCollection>();
-            SqlError error = Construct<SqlError>(number, (byte)2, (byte)3, "rm-server", "Could not find stored procedure", "proc", 100, null);
+            SqlError error = null;
+            if (number == 2)
+            {
+                error = Construct<SqlError>(number, (byte)2, (byte)3, "rm-server", "cannot open database", "database", 100, null);
+            }
+            else
+            {
+                error = Construct<SqlError>(number, (byte)2, (byte)3, "rm-server", "Could not find stored procedure", "proc", 100, null);
+            }
+ 
             typeof(SqlErrorCollection)
                 .GetMethod("Add", BindingFlags.NonPublic | BindingFlags.Instance)
                 .Invoke(collection, new object[] { error });

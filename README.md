@@ -16,16 +16,17 @@
 * ASP.NET Core
 * EF In-Memory Database
 
-### performancelog
+### scope
 這個 Branch 是
 
-1. 將共用的 Middleware 、 Filter 等 Class 抽到 RMStore.Infrastructure 專案，供 API & WebUI 使用。
-2. 記錄 Razor Page & Action 的執行時間，並使用 LoggerMessage.Define 來減少參數的 boxing ，以增加效能。
+1. 使用 BeginScope 將共通的資訊記錄到 scope 之中
+2. 將 Email Address Mask 後再 Log
+3. 使用 Func<Exception, LogLevel> 將 LogLevel 交由使用系統來決定
 
 切換請使用
 ```
 
-git checkout performancelog
+git checkout scope
 
 ```
 使用 Serilog 將 Log 寫到檔案之中，WebUI 與 API 均寫到同一個檔案之中。

@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using RMStore.Infrastructure.Middleware;
 using RMStore.Domain;
 using RMStore.Infrastructure.Filters;
+using RMStore.Infrastructure;
 
 namespace RMStore.API
 {
@@ -34,6 +35,8 @@ namespace RMStore.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IScopeInformation, ScopeInformation>();
+
             var jwtSettings = Configuration.GetSection("JWT").Get<JwtSettings>();
             // Adding Authentication  
             services.AddAuthentication(options =>
@@ -67,7 +70,10 @@ namespace RMStore.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //使用自定的 Exception Handler
-            app.UseApiExceptionHandler(options => options.AddResponseDetails = UpdateApiErrorResponse);
+            app.UseApiExceptionHandler(options => { 
+                options.AddResponseDetails = UpdateApiErrorResponse;
+                options.DetermineLogLevel = DetermineLogLevel;
+            });
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -75,6 +81,15 @@ namespace RMStore.API
             {
                 endpoints.MapControllers();
             });
+        }
+
+        private LogLevel DetermineLogLevel(Exception ex)
+        {
+            if (ex.Message.StartsWith("cannot open database", StringComparison.InvariantCultureIgnoreCase) )
+            {
+                return LogLevel.Critical;
+            }
+            return LogLevel.Error;
         }
 
         private void UpdateApiErrorResponse(HttpContext context, Exception ex, ApiError error)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.WebSockets;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -12,23 +13,22 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RMStore.Domain;
+using RMStore.Infrastructure;
 using RMStore.Infrastructure.BaseClasses;
 
 namespace RMStore.WebUI.Pages
 {
-    public class ProductModel : BasePageModel
+    public class ProductModel : PageModel
     {
         private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
         public List<Product> Products;
 
         [BindProperty]
         public string ProductName { get; set; } = string.Empty;
 
-        public ProductModel(ILogger<ProductModel> logger, IConfiguration configuration): base(logger)
+        public ProductModel(ILogger<ProductModel> logger, IScopeInformation scopeInfo)  
         {
             _logger = logger;
-            _configuration = configuration;
         }
         
         public async Task OnGetAsync()
@@ -38,13 +38,11 @@ namespace RMStore.WebUI.Pages
 
         private async Task GetProducts(string productName)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-            _logger.LogInformation(message: "{UserName}({userId}) is about to call the product api go get all products. {Claims}",
-                User.Identity.Name, userId, User.Claims);
+            _logger.LogInformation(message: "RazorPage ENTRY: search products");
             using (var http = new HttpClient(new StandardHttpMessageHandler(HttpContext, _logger)))
             {
                 var apiUrl = $"https://localhost:44330/product?productName={HttpUtility.UrlEncode(productName)}";
-                if(productName.ToLower() == "patherror")
+                if (productName.ToLower() == "patherror")
                 {
                     apiUrl = $"https://localhost:44330/productx?productName={HttpUtility.UrlEncode(productName)}";
                 }
