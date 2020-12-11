@@ -20,6 +20,10 @@ using RMStore.Infrastructure.Middleware;
 using RMStore.Domain;
 using RMStore.Infrastructure.Filters;
 using RMStore.Infrastructure;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Resources;
+using OpenTelemetry;
+using System.Net.Http;
 
 namespace RMStore.API
 {
@@ -65,6 +69,21 @@ namespace RMStore.API
             {
                 options.Filters.Add(typeof(TrackActionPerformanceFilter));
             });
+
+            //OpenTelemetry
+            var serviceName = typeof(Startup).Namespace;
+            services.AddOpenTelemetryTracing((builder) => builder
+                .SetResourceBuilder(
+                    ResourceBuilder.CreateDefault().AddService(serviceName))
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddJaegerExporter(jaegerOptions =>
+                {
+                    jaegerOptions.AgentHost = "localhost";
+                    jaegerOptions.AgentPort = 6831;
+                })
+                .AddConsoleExporter()
+           );
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

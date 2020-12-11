@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using RMStore.Infrastructure;
 using RMStore.Infrastructure.Filters;
 
@@ -46,6 +50,23 @@ namespace RMStore.WebUI
                     //加入 Filter 來記錄 Razor Page 執行的起迄時間
                     options.Filters.Add(typeof(TrackPagePerformanceFilter));
                 });
+            services.AddHttpClient();
+
+            //OpenTelemetry
+            var serviceName = typeof(Startup).Namespace;
+            services.AddOpenTelemetryTracing((builder) => builder
+                .SetResourceBuilder(
+                    ResourceBuilder.CreateDefault().AddService(serviceName))
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddJaegerExporter(jaegerOptions =>
+                {
+                    jaegerOptions.AgentHost = "localhost";
+                    jaegerOptions.AgentPort = 6831;
+                })
+                .AddConsoleExporter()
+           );
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +87,8 @@ namespace RMStore.WebUI
             {
                 endpoints.MapRazorPages();
             });
+
+            
         }
     }
 }
