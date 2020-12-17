@@ -75,6 +75,7 @@ namespace RMStore.API
             services.AddOpenTelemetryTracing((builder) => builder
                 .SetResourceBuilder(
                     ResourceBuilder.CreateDefault().AddService(serviceName))
+                .AddSource(serviceName)
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddJaegerExporter(jaegerOptions =>
@@ -82,6 +83,7 @@ namespace RMStore.API
                     jaegerOptions.AgentHost = "localhost";
                     jaegerOptions.AgentPort = 6831;
                 })
+                
                 .AddConsoleExporter()
            );
         }

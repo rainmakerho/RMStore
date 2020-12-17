@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry.Trace;
 using RMStore.Domain;
 using RMStore.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -34,6 +36,10 @@ namespace RMStore.API.Controllers
         public ActionResult<IEnumerable<Product>> GetProducts(
             [FromQuery] string productName)
         {
+            var tracer = TracerProvider.Default.GetTracer(typeof(Startup).Namespace);
+            using var span = tracer.StartSpan("API.GetProducts");
+            span.SetAttribute($"Action:", "ProductAPI.GetProducts");
+            span?.SetAttribute($"productName", productName);
             _logger.LogInformation(message: "API ENTRY: Inside search products API Call");
             var products = _productRepository.GetAllProducts(productName);
             return Ok(products);

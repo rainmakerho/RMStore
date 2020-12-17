@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Newtonsoft.Json;
+using OpenTelemetry.Trace;
 using RMStore.Domain;
 using RMStore.Infrastructure;
 using RMStore.Infrastructure.BaseClasses;
@@ -26,7 +27,6 @@ namespace RMStore.WebUI.Pages
         private readonly ILogger _logger;
         public List<Product> Products;
         private readonly IHttpClientFactory _clientFactory;
-
         [BindProperty]
         public string ProductName { get; set; } = string.Empty;
 
@@ -45,8 +45,12 @@ namespace RMStore.WebUI.Pages
 
         private async Task GetProducts(string productName)
         {
-           
-                _logger.LogInformation(message: "RazorPage ENTRY: search products");
+            var tracer = TracerProvider.Default.GetTracer(typeof(Startup).Namespace);
+            using var span = tracer.StartSpan("Product.cshtml.GetProducts");
+            span?.SetAttribute($"Action:", "GetProducts");
+
+
+            _logger.LogInformation(message: "RazorPage ENTRY: search products");
                 var apiUrl = $"https://localhost:44330/product?productName={HttpUtility.UrlEncode(productName)}";
                 if (productName?.ToLower() == "patherror")
                 {

@@ -13,8 +13,12 @@ using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Logs;
+
 using RMStore.Infrastructure;
 using RMStore.Infrastructure.Filters;
+using System.Diagnostics;
 
 namespace RMStore.WebUI
 {
@@ -57,6 +61,7 @@ namespace RMStore.WebUI
             services.AddOpenTelemetryTracing((builder) => builder
                 .SetResourceBuilder(
                     ResourceBuilder.CreateDefault().AddService(serviceName))
+                .AddSource(serviceName)
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddJaegerExporter(jaegerOptions =>
@@ -65,8 +70,12 @@ namespace RMStore.WebUI
                     jaegerOptions.AgentPort = 6831;
                 })
                 .AddConsoleExporter()
-           );
+            );
+             
+            
 
+ 
+           //services.Add(new ServiceDescriptor(typeof(ActivitySource), new ActivitySource(serviceName)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
